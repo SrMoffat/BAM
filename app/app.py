@@ -146,6 +146,7 @@ class Meal(Resource):
                               description=description,
                               owner=User._ID)
         new_meal_holder = {}
+        new_meal_holder['id'] = new_meal.id
         new_meal_holder['name'] = name
         new_meal_holder['description'] = description
         new_meal_holder['owner'] = User._ID
@@ -159,6 +160,25 @@ class Meal(Resource):
             'description' : description,
             'owner' : new_meal.owner
         }, 201
+
+
+    def get(self):
+        """
+        The get method for retrieving meals GET api/v1/meals
+        """ 
+        if len(meals) == 0:
+            return {
+                'status' : 404,
+                'message' : 'No results found!'
+            }, 404
+        else:   
+            return {
+                'status' : 200,
+                'num_of_meals' : len(meals),
+                'meals' : meals
+            }, 200
+
+
 
 
 
