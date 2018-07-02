@@ -36,8 +36,44 @@ class User(object):
         """
         user_holder = {
             'id' : self._ID,
-            'username' : self.username,
-            'email' : self.email,
+            'username' : self.username,            
             'admin' : self.email
         }
         return user_holder
+
+class MealOption(object):
+    """
+    The model class for the meals
+    """
+    _ID = 0
+
+    def __init__(self, name, description, owner):
+        """
+        Constructor for the meal class
+        """
+        self.id = MealOption._ID
+        self.name = name
+        self.description = description
+        self.owner = User._ID
+
+        MealOption._ID += 1
+
+    def get_meal_owner(self, meal_id):
+        """
+        Return the user associated with a meal
+        """
+        for meal in meals:
+            if meal.id == meal_id:
+                return meal.owner
+
+    def meal_holder(self):
+        """
+        Get the meal and its details
+        """
+        meal_details = {
+            'id' : self._ID,
+            'name' : self.name,
+            'description' : self.description,
+            'owner' : self.owner
+        }
+        return meal_details

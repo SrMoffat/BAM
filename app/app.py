@@ -1,8 +1,9 @@
 from flask import request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import app, api, Resource, User
+from app import app, api, Resource, User, MealOption
 
 users = []
+meals = []
 
 
 class SignUp(Resource):
@@ -109,6 +110,57 @@ class Login(Resource):
                     'username' : username,
                     'admin' : user['admin']               
                 }, 200
+
+class Meal(Resource):
+    """
+    The meal resource for the API
+    """
+    def post(self):
+        """
+        The post method for creating meals POST api/v1/meals
+        """
+        name = request.json['name']
+        description = request.json['description']
+
+        if not name or not description:
+            return {
+                'status' : 400,
+                'message' : 'All fields required!'
+            }, 400
+        
+        elif len(name.split()) == 0 or len(description.split()) == 0:
+            return {
+                'status' : 400,
+                'message' : 'Invalid input!'
+            }, 400
+
+        else:
+            for meal in meals:
+                if name == meal['name']:
+                    return {
+                        'status' : 409,
+                        'message' : 'Meal already exists!'
+                    }, 409
+
+        new_meal = MealOption(name=name,
+                              description=description,
+                              owner=User._ID)
+        new_meal_holder = {}
+        new_meal_holder['name'] = name
+        new_meal_holder['description'] = description
+        new_meal_holder['owner'] = User._ID
+
+        meals.append(new_meal_holder)
+
+        return {
+            'status' : 201,
+            'id' : new_meal._ID,
+            'name' : name,
+            'description' : description,
+            'owner' : new_meal.owner
+        }, 201
+
+
 
 
       
