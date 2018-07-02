@@ -4,7 +4,7 @@ class User(object):
     """
     The model class for the users
     """
-    _ID = 1 
+    _ID = 0
 
     def __init__(self, username, password, admin):
         """

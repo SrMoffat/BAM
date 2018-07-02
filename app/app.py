@@ -55,13 +55,15 @@ class SignUp(Resource):
         
         # Store the user object in user_holder
         new_user_holder = {}
+        new_user_holder['id'] = new_user._ID
         new_user_holder['username'] = username
         new_user_holder['password'] = hashed_password
         new_user_holder['admin'] = new_user.admin
+        
 
         # Check for successful instantiation then add new_user to storage
         if new_user:
-            users.append(new_user_holder) 
+            users.append(new_user_holder)             
         else:
             return jsonify({
                 'message' : 'User not created!'
@@ -103,7 +105,9 @@ class Login(Resource):
             if username == user['username'] and check_password_hash(user['password'], password):
                 return {
                     'status' : 200,
-                    'message' : 'You are now logged in!'
+                    'id' : user['id'],
+                    'username' : username,
+                    'admin' : user['admin']               
                 }, 200
 
 
