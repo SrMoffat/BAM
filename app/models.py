@@ -6,13 +6,12 @@ class User(object):
     """
     _ID = 1 
 
-    def __init__(self, username, email, password, admin):
+    def __init__(self, username, password, admin):
         """
         Constructor for the user class
         """
         self.id = User._ID
         self.username = username
-        self.email = email 
         self.password_hash = generate_password_hash(password)
         self.admin = False
 
