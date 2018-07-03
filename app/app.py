@@ -75,6 +75,16 @@ class SignUp(Resource):
             'message' : 'You have been succesfully registered!'
         }, 201
 
+    def get(self):
+        """
+        Get all users --> Admin Only
+        """
+        return {
+            'status' : 200,
+            'no. of users' : len(users),
+            'users' : users
+        }, 200
+
 class Login(Resource):
     """
     The resource for user login
@@ -186,8 +196,6 @@ class SingleMeal(Resource):
         """
         The get method for retrieving a single meal GET api/v1/meals/<int:id>
         """
-       
-                
         for meal in meals:        
             if int(meal['id']) == id:
                 return {
@@ -201,6 +209,25 @@ class SingleMeal(Resource):
                     'status' : 404,
                     'message' : 'Meal does not exist!'
                 }, 404
+
+    def put(self, id):
+        """
+        The put method for updating a meal PUT api/v1/meals/<int:id>
+        """ 
+        description = request.json['description']
+        
+        if description:
+            for meal in meals:
+                if int(meal['id']) == id:
+                    meal['description'] = description
+                    return {
+                        'status' : 200,
+                        'message' : 'Updated!',
+                        'meal' : meal
+                    }, 200
+                   
+                    
+
 
 
 
