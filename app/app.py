@@ -178,6 +178,30 @@ class Meal(Resource):
                 'meals' : meals
             }, 200
 
+class SingleMeal(Resource):
+    """
+    The individual meal resource for the API
+    """
+    def get(self, id):
+        """
+        The get method for retrieving a single meal GET api/v1/meals/<int:id>
+        """
+       
+                
+        for meal in meals:        
+            if int(meal['id']) == id:
+                return {
+                    'status' : 200,
+                    'id' : meal['id'],
+                    'name' : meal['name'],
+                    'description' : meal['description']
+                }, 200
+            else:
+                return {
+                    'status' : 404,
+                    'message' : 'Meal does not exist!'
+                }, 404
+
 
 
 
