@@ -77,13 +77,20 @@ class SignUp(Resource):
 
     def get(self):
         """
-        Get all users --> Admin Only
+        Get all users --> Should be Admin Only
         """
-        return {
-            'status' : 200,
-            'no. of users' : len(users),
-            'users' : users
-        }, 200
+        if len(users) == 0:
+            return {
+                'status' : 404,
+                'users' : 'No users found!'
+            }, 404
+        else:
+            return {
+                'status' : 200,
+                'no. of users' : len(users),
+                'users' : users
+            }, 200
+
 
 class Login(Resource):
     """
@@ -216,6 +223,20 @@ class SingleMeal(Resource):
         """ 
         description = request.json['description']
         
+      
+        if not description:
+            return {
+                'status': 400,
+                'message' : 'Description can\'t be null!'
+            },400
+
+        # Check for empty string values
+        elif len(description.split()) == 0:
+            return {
+                'status' : 400,
+                'message' : 'Invalid input!'
+            }, 400
+        
         if description:
             for meal in meals:
                 if int(meal['id']) == id:
@@ -225,6 +246,29 @@ class SingleMeal(Resource):
                         'message' : 'Updated!',
                         'meal' : meal
                     }, 200
+
+    def delete(self, id):
+        """
+        The delete method for removing a meal option DELETE api/v1/meals/<int:id>
+        """
+
+        if len(meals) == 0:
+            return {
+                'status' : 404,
+                'message' : 'No meals exist'
+            }, 404
+        for meal in meals:
+            if int(meal['id']) == id:
+                del meals[meal['id']]
+                return {
+                    'status' : 200,
+                    'message' : 'Meal deleted!'
+                }, 200
+            elif id not in [meal['id'] for meal in meals]:
+                return {
+                    'status' : 404,
+                    'message' : 'Meal does not exist!'
+                }, 404
                    
                     
 
