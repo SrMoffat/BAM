@@ -4,13 +4,12 @@ class User(object):
     """
     The model class for the users
     """
-    
-
+    _ID = 0
     def __init__(self, username, password, admin):
         """
         Constructor for the user class
         """
-        _ID = 1
+        
         self.id = User._ID
         self.username = username
         self.password_hash = generate_password_hash(password)
@@ -46,7 +45,7 @@ class MealOption(object):
     """
     The model class for the meals
     """
-    _ID = 1
+    _ID = 0
 
     def __init__(self, name, description, owner):
         """
@@ -79,21 +78,22 @@ class MealOption(object):
         }
         return meal_details
     
-class Menu(object):
+class MenuObj(object):
     """
     The model class for the menu
     """
-    _ID = 1
+    _ID = 0
+
     def __init__(self,day,meals,owner):
         """
         The constructor method for the menu
         """
-        self.id = Menu._ID        
+        self.id = MenuObj._ID        
         self.day = day
-        self.meals = []
+        self.meals = meals
         self.owner = User._ID
 
-        Menu._ID += 1
+        MenuObj._ID += 1
 
     def get_menu_by_owner(self, menu_id):
         """

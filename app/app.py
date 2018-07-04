@@ -1,10 +1,10 @@
 from flask import request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import app, api, Resource, User, MealOption, Menu
+from app import app, api, Resource, User, MealOption, MenuObj
 
 users = []
 meals = []
-menu = []
+menus = []
 
 
 class SignUp(Resource):
@@ -164,7 +164,7 @@ class Meal(Resource):
                               description=description,
                               owner=User._ID)
         new_meal_holder = {}
-        new_meal_holder['id'] = new_meal.id
+        new_meal_holder['id'] = new_meal._ID
         new_meal_holder['name'] = name
         new_meal_holder['description'] = description
         new_meal_holder['owner'] = User._ID
@@ -280,22 +280,59 @@ class Menu(Resource):
         The method to create a menu POST api/v1/menu
         """
         day = request.json['day']
-        meals = request.json['meals']
+        menu_meals = request.json['meals']
 
-        if not day and not meals:
+        if not day and not menu_meals:
             return {
                 'status' : 400,
                 'message' : 'All fields are required!'
             }, 400
-        elif len(day.split()) == 0 or len(meals) == 0:
+        elif len(day.split()) == 0 or len(menu_meals) == 0:
             return {
                 'status' : 400,
                 'message' : 'Invalid input!'
             }, 400
+        meals_to_commit=[]
+        for menu_meal in menu_meals:
+            if menu_meal in [meal['name'] for meal in meals]:
+                for meal in meals:
+                    if meal['name'] == menu_meal:
+                        meals_to_commit.append(meal)
+           
+                        
+      
+        new_menu = MenuObj(day=day,
+                           meals=meals_to_commit,
+                           owner=User._ID)
+        new_menu_holder = {}
+        new_menu_holder['id'] = new_menu._ID
+        new_menu_holder['day'] = day,
+        new_menu_holder['meals'] = meals_to_commit,
+        new_menu_holder['owner'] = User._ID
+
+      
+        if new_menu:
+            menus.append(new_menu_holder)
+            
+        else:
+            return jsonify({
+                'message' : 'Menu not created!'
+            })
+        
+        for menu in menus:
+          
+            if menu['day'] == day:
+                return {
+                    'status' : 409,
+                    'message' : 'Menu for '+ day + 'is already set!'
+                }, 409
+
         return {
+            'status' : 200,
+            'id' : new_menu._ID,
             'day' : day,
-            'meals' : meals
-        }
+            'meals' : meals_to_commit
+        }, 200
                    
                     
 
