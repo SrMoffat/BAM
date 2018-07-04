@@ -1,9 +1,10 @@
 from flask import request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import app, api, Resource, User, MealOption
+from app import app, api, Resource, User, MealOption, Menu
 
 users = []
 meals = []
+menu = []
 
 
 class SignUp(Resource):
@@ -269,6 +270,32 @@ class SingleMeal(Resource):
                     'status' : 404,
                     'message' : 'Meal does not exist!'
                 }, 404
+
+class Menu(Resource):
+    """
+    The menu resource for the API
+    """
+    def post(self):
+        """
+        The method to create a menu POST api/v1/menu
+        """
+        day = request.json['day']
+        meals = request.json['meals']
+
+        if not day and not meals:
+            return {
+                'status' : 400,
+                'message' : 'All fields are required!'
+            }, 400
+        elif len(day.split()) == 0 or len(meals) == 0:
+            return {
+                'status' : 400,
+                'message' : 'Invalid input!'
+            }, 400
+        return {
+            'day' : day,
+            'meals' : meals
+        }
                    
                     
 

@@ -12,4 +12,4 @@ api = Api(app,
 app.config.from_object(app_config['testing'])
 
 
-from app.models import User, MealOption
+from app.models import User, MealOption, Menu
