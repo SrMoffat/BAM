@@ -310,22 +310,22 @@ class Menu(Resource):
         new_menu_holder['meals'] = meals_to_commit,
         new_menu_holder['owner'] = User._ID
 
+
+
       
-        if new_menu:
-            menus.append(new_menu_holder)
-            
+        if new_menu: 
+            for menu in menus:
+                if menu['day'] == new_menu_holder['day']:
+                    return {
+                            'status' : 409,
+                            'message' : 'Menu for ' + str(new_menu_holder['day']) + 'is already set!'
+                            }, 409         
+            menus.append(new_menu_holder)            
         else:
             return jsonify({
                 'message' : 'Menu not created!'
-            })
+            })       
         
-        for menu in menus:
-          
-            if menu['day'] == day:
-                return {
-                    'status' : 409,
-                    'message' : 'Menu for '+ day + 'is already set!'
-                }, 409
 
         return {
             'status' : 200,
