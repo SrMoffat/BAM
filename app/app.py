@@ -80,6 +80,7 @@ class SignUp(Resource):
         """
         Get all users --> Should be Admin Only
         """
+        #Check if there are no users
         if len(users) == 0:
             return {
                 'status' : 404,
@@ -120,6 +121,8 @@ class Login(Resource):
                 'status' : 403,
                 'message' : 'Invalid credentials!'
             }, 403
+
+        # Validate input then log user in
         for user in users:
             if username == user['username'] and check_password_hash(user['password'], password):
                 return {
@@ -140,18 +143,21 @@ class Meal(Resource):
         name = request.json['name']
         description = request.json['description']
 
+        # Check empty input
         if not name or not description:
             return {
                 'status' : 400,
                 'message' : 'All fields required!'
             }, 400
-        
+
+        # Check for empty strings
         elif len(name.split()) == 0 or len(description.split()) == 0:
             return {
                 'status' : 400,
                 'message' : 'Invalid input!'
             }, 400
 
+        # Buffer double entry
         else:
             for meal in meals:
                 if name == meal['name']:
@@ -160,9 +166,12 @@ class Meal(Resource):
                         'message' : 'Meal already exists!'
                     }, 409
 
+        # Instantiate menu object
         new_meal = MealOption(name=name,
                               description=description,
                               owner=User._ID)
+
+        # Store user object
         new_meal_holder = {}
         new_meal_holder['id'] = new_meal._ID
         new_meal_holder['name'] = name
@@ -184,6 +193,7 @@ class Meal(Resource):
         """
         The get method for retrieving meals GET api/v1/meals
         """ 
+        # Check if meAls exist
         if len(meals) == 0:
             return {
                 'status' : 404,
@@ -204,6 +214,7 @@ class SingleMeal(Resource):
         """
         The get method for retrieving a single meal GET api/v1/meals/<int:id>
         """
+        # Match the meak by id then return
         for meal in meals:        
             if int(meal['id']) == id:
                 return {
@@ -224,7 +235,7 @@ class SingleMeal(Resource):
         """ 
         description = request.json['description']
         
-      
+        # Check empty input
         if not description:
             return {
                 'status': 400,
@@ -253,11 +264,14 @@ class SingleMeal(Resource):
         The delete method for removing a meal option DELETE api/v1/meals/<int:id>
         """
 
+        # Check if meals exist
         if len(meals) == 0:
             return {
                 'status' : 404,
                 'message' : 'No meals exist'
             }, 404
+        
+        # Select meal by id and delete it
         for meal in meals:
             if int(meal['id']) == id:
                 del meals[meal['id']]
@@ -265,6 +279,8 @@ class SingleMeal(Resource):
                     'status' : 200,
                     'message' : 'Meal deleted!'
                 }, 200
+            
+            # Check if the meal exists 
             elif id not in [meal['id'] for meal in meals]:
                 return {
                     'status' : 404,
@@ -282,17 +298,23 @@ class Menu(Resource):
         day = request.json['day']
         menu_meals = request.json['meals']
 
+        # Check for empty entries
         if not day and not menu_meals:
             return {
                 'status' : 400,
                 'message' : 'All fields are required!'
             }, 400
+        
+        # Check for empty strings
         elif len(day.split()) == 0 or len(menu_meals) == 0:
             return {
                 'status' : 400,
                 'message' : 'Invalid input!'
             }, 400
+
         meals_to_commit=[]
+
+        # Check if selected meals exist, if so add to menu 
         for menu_meal in menu_meals:
             if menu_meal in [meal['name'] for meal in meals]:
                 for meal in meals:
@@ -300,18 +322,17 @@ class Menu(Resource):
                         meals_to_commit.append(meal)
            
                         
-      
+        # Instantiate menu object
         new_menu = MenuObj(day=day,
                            meals=meals_to_commit,
                            owner=User._ID)
+
+        # Store menu 
         new_menu_holder = {}
         new_menu_holder['id'] = new_menu._ID
         new_menu_holder['day'] = day,
         new_menu_holder['meals'] = meals_to_commit,
         new_menu_holder['owner'] = User._ID
-
-
-
       
         if new_menu: 
             for menu in menus:
