@@ -319,8 +319,7 @@ class Menu(Resource):
             if menu_meal in [meal['name'] for meal in meals]:
                 for meal in meals:
                     if meal['name'] == menu_meal:
-                        meals_to_commit.append(meal)
-           
+                        meals_to_commit.append(meal)           
                         
         # Instantiate menu object
         new_menu = MenuObj(day=day,
@@ -330,23 +329,23 @@ class Menu(Resource):
         # Store menu 
         new_menu_holder = {}
         new_menu_holder['id'] = new_menu._ID
-        new_menu_holder['day'] = day,
-        new_menu_holder['meals'] = meals_to_commit,
+        new_menu_holder['day'] = day
         new_menu_holder['owner'] = User._ID
+        new_menu_holder['meals'] = meals_to_commit
+        
       
         if new_menu: 
             for menu in menus:
                 if menu['day'] == new_menu_holder['day']:
                     return {
                             'status' : 409,
-                            'message' : 'Menu for ' + str(new_menu_holder['day']) + 'is already set!'
+                            'message' : 'Menu for ' + str(new_menu_holder['day']) + ' is already set!'
                             }, 409         
             menus.append(new_menu_holder)            
         else:
             return jsonify({
                 'message' : 'Menu not created!'
-            })       
-        
+            }) 
 
         return {
             'status' : 200,
@@ -354,6 +353,23 @@ class Menu(Resource):
             'day' : day,
             'meals' : meals_to_commit
         }, 200
+
+    def get(self):
+        """
+        The method to retrieve menus in the API
+        """
+
+        # Check if menus exist
+        if len(menus) == 0:
+            return {
+                'status' : 404,
+                'message' : 'No menus have been set'
+            }, 404
+        else:
+            return {
+                'status' : 200,
+                'menus' : menus
+            }, 200
                    
                     
 
